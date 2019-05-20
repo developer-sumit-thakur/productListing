@@ -15,6 +15,9 @@ import org.junit.Test
 import org.junit.Rule
 import org.junit.runner.RunWith
 
+/**
+ * @author sumit.T
+ */
 @RunWith(AndroidJUnit4::class)
 class DetailsFragmentTest {
 
