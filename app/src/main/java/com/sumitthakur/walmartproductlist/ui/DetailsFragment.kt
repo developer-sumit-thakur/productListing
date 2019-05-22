@@ -1,6 +1,7 @@
 package com.sumitthakur.walmartproductlist.ui
 
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,6 +62,8 @@ open class DetailsFragment : Fragment() {
                 }
             }
         }
+
+        itemBinding.productDesc.movementMethod = ScrollingMovementMethod()
 
         return itemBinding.root
     }

@@ -16,7 +16,7 @@ import com.sumitthakur.walmartproductlist.util.ImageUtil
  * @author Sumit.T
  */
 
-class ProductsAdapter(private val activity: FragmentActivity?, private var products: List<Product>) :
+class ProductsAdapter(private val activity: FragmentActivity?, private var products: ArrayList<Product>) :
     RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
 
     private var listener: OnItemClickListener? = null
@@ -45,25 +45,19 @@ class ProductsAdapter(private val activity: FragmentActivity?, private var produ
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var title: TextView
-        var price: TextView
-        var rating: TextView
-        var productImage: ImageView
+        var title: TextView = view.findViewById(R.id.productTitle)
+        var price: TextView = view.findViewById(R.id.productPrice)
+        var rating: TextView = view.findViewById(R.id.productRating)
+        var productImage: ImageView = view.findViewById(R.id.productImage)
 
-        init {
-            title = view.findViewById(R.id.productTitle)
-            price = view.findViewById(R.id.productPrice)
-            rating = view.findViewById(R.id.productRating)
-            productImage = view.findViewById(R.id.productImage)
-        }
     }
 
     fun setProducts(products: List<Product>) {
-        this.products = products
+        this.products.addAll(products)
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductsAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val root = LayoutInflater.from(parent.context).inflate(R.layout.item_view, parent, false)
         return ViewHolder(root)
     }

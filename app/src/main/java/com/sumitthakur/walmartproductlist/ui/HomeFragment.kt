@@ -35,9 +35,7 @@ open class HomeFragment : Fragment(), ProductsAdapter.OnItemClickListener {
     var isLoading = false
 
     interface InteractionListener {
-        fun onSuccess()
         fun onItemClick(product: Product)
-        fun onFailure()
     }
 
     override fun onAttach(context: Context?) {
@@ -56,21 +54,26 @@ open class HomeFragment : Fragment(), ProductsAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        showProgress(true)
         llayoutManager = LinearLayoutManager(activity)
         productListView.setHasFixedSize(true)
-        productListView.setLayoutManager(llayoutManager)
+        productListView.layoutManager = llayoutManager
         adapter = ProductsAdapter(activity, ArrayList())
-        productListView.setAdapter(adapter)
+        productListView.adapter = adapter
         adapter.setOnItemClickListener(this)
         initScrollListener(productListView, llayoutManager as LinearLayoutManager)
 
         productListViewModel?.productLiveData?.observe(this, Observer {
             it?.apply {
-                interactionListener.onSuccess()
+                onSuccess()
                 adapter.setProducts(this)
                 isLoading = false
-            } ?: takeIf { adapter.itemCount == 0 }?.apply { interactionListener.onFailure() }
+            } ?: takeIf { adapter.itemCount == 0 }?.apply { onFailure() }
         })
+
+        retryButton.setOnClickListener {
+            productListViewModel?.productLiveData
+        }
     }
 
     override fun onItemClick(product: Product) {
@@ -81,17 +84,50 @@ open class HomeFragment : Fragment(), ProductsAdapter.OnItemClickListener {
         productListView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val total = llayoutManager.getItemCount()
+                val total = llayoutManager.itemCount
                 val lastVisibleItemCount = llayoutManager.findLastVisibleItemPosition()
 
-                if (!isLoading) {
-                    if (total > 0)
-                        if (total - 2 == lastVisibleItemCount) {
-                            isLoading = true
-                            productListViewModel?.loadMore(1, total + 10)
-                        }
-                }
+                if (total > 0)
+                    if (total - 3 == lastVisibleItemCount && !isLoading) {
+                        isLoading = true
+                        showProgress(true)
+                        productListViewModel?.loadMore(total / 10 + 1)
+                    }
             }
         })
+    }
+
+    private fun showProgress(show: Boolean) {
+        progressView?.apply {
+            visibility = if (show) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        }
+    }
+
+    private fun onSuccess() {
+        itemsView?.apply {
+            visibility = View.VISIBLE
+        }
+
+        showProgress(false)
+
+        errorView?.apply {
+            visibility = View.GONE
+        }
+    }
+
+    private fun onFailure() {
+        itemsView?.apply {
+            visibility = View.GONE
+        }
+
+        showProgress(false)
+
+        errorView?.apply {
+            visibility = View.VISIBLE
+        }
     }
 }

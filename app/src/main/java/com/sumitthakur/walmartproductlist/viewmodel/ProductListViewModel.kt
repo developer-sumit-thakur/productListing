@@ -24,7 +24,7 @@ open class ProductListViewModel : ViewModel() {
     lateinit var backendService: BackendService
 
     private var pageNumber: Int = 1
-    private var pageSize: Int = 10
+    private var pageSize: Int = 10 //default load size
 
     var productLiveData: MutableLiveData<List<Product>>? = null
         get() {
@@ -37,7 +37,7 @@ open class ProductListViewModel : ViewModel() {
 
     fun loadData(result: MutableLiveData<List<Product>>?) {
         result?.apply {
-            Log.d(TAG, "loadData()")
+            Log.d(TAG, "loadData() pageNumber: $pageNumber & pageSize: $pageSize")
             backendService = BackendService.newInstance()
             backendService.initService()
             backendService.getProducts(pageNumber, pageSize, object : BackendService.ResponseListener {
@@ -54,9 +54,8 @@ open class ProductListViewModel : ViewModel() {
         }
     }
 
-    fun loadMore(pageNumber: Int, pageSize: Int) {
-        this.pageSize = pageSize
+    fun loadMore(pageNumber: Int) {
         this.pageNumber = pageNumber
-        loadData(productLiveData)
+        productLiveData
     }
 }
