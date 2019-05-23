@@ -36,6 +36,11 @@ class DetailsFragmentTest {
     }
 
     @Test
+    fun testTitleBar() {
+        onView(allOf(withText("Product details"), isDisplayed()))
+    }
+
+    @Test
     fun onSuccessResponse() {
         detailsFragment.product = getMockedProduct()
         onView(withId(R.id.productTitle)).check(matches((isDisplayed())))

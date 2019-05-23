@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
  * data class
  * @author sumit.T
  */
-//parcel: Parcel) : Parcelable {
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Product(
@@ -35,27 +34,6 @@ class Product(
         parcel.readString(),
         parcel.readString()
     )
-
-    /*fun getProduct(title: String, price: String, imageUrl: String, rating: String): Product {
-        this.productName = title
-        this.price = price
-        this.productImage = imageUrl
-        this.reviewRating = rating
-        return this
-    }
-
-    init {
-        longDescription = parcel.readString()
-        productImage = parcel.readString()
-        productId = parcel.readString()
-        reviewCount = parcel.readString()
-        price = parcel.readString()
-        inStock = parcel.readInt() == 1
-        shortDescription = parcel.readString()
-        reviewRating = parcel.readString()
-        productName = parcel.readString()
-    }*/
-
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(longDescription)

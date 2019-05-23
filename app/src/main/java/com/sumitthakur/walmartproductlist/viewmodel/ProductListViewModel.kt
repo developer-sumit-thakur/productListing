@@ -8,6 +8,7 @@ import com.sumitthakur.walmartproductlist.api.BackendService
 import com.sumitthakur.walmartproductlist.api.modle.Product
 import com.sumitthakur.walmartproductlist.api.modle.ProductsResponse
 import com.sumitthakur.walmartproductlist.testing.OpenForTesting
+import io.reactivex.observers.DisposableObserver
 
 /**
  * ViewModel class to load data from backend
@@ -24,39 +25,38 @@ open class ProductListViewModel : ViewModel() {
     lateinit var backendService: BackendService
 
     private var pageNumber: Int = 1
-    private var pageSize: Int = 10
+    private var pageSize: Int = 10 //default load size
 
     var productLiveData: MutableLiveData<List<Product>>? = null
-        get() {
-            if (field == null) {
-                field = MutableLiveData()
-            }
-            loadData(field)
-            return field
-        }
 
-    fun loadData(result: MutableLiveData<List<Product>>?) {
-        result?.apply {
-            Log.d(TAG, "loadData()")
+    fun loadData() {
+        if (productLiveData == null) {
+            productLiveData = MutableLiveData()
+        }
+        productLiveData?.apply {
+            Log.d(TAG, "loadData() pageNumber: $pageNumber & pageSize: $pageSize")
             backendService = BackendService.newInstance()
             backendService.initService()
-            backendService.getProducts(pageNumber, pageSize, object : BackendService.ResponseListener {
-                override fun onSuccess(response: ProductsResponse) {
-                    Log.d(TAG, "Response : " + Gson().toJson(response.toString()))
-                    result?.postValue(response.products)
+            backendService.getProducts(pageNumber, pageSize).subscribe(object : DisposableObserver<ProductsResponse>() {
+                override fun onComplete() {}
+
+                override fun onNext(response: ProductsResponse) {
+                    if (response != null) {
+                        Log.d(TAG, "Response : " + Gson().toJson(response.toString()))
+                        productLiveData?.postValue(response.products)
+                    }
                 }
 
-                override fun onError(errorMsg: String) {
-                    Log.e(TAG, errorMsg)
-                    result?.postValue(null)
+                override fun onError(e: Throwable) {
+                    Log.e(TAG, "Error  ${e.message}")
+                    productLiveData?.postValue(null)
                 }
             })
         }
     }
 
-    fun loadMore(pageNumber: Int, pageSize: Int) {
-        this.pageSize = pageSize
+    fun loadMore(pageNumber: Int) {
         this.pageNumber = pageNumber
-        loadData(productLiveData)
+        loadData()
     }
 }

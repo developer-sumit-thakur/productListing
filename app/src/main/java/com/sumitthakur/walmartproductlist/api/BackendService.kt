@@ -1,12 +1,9 @@
 package com.sumitthakur.walmartproductlist.api
 
-import com.sumitthakur.walmartproductlist.api.modle.Product
 import com.sumitthakur.walmartproductlist.api.modle.ProductsResponse
-import com.sumitthakur.walmartproductlist.testing.OpenClass
 import com.sumitthakur.walmartproductlist.testing.OpenForTesting
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -44,35 +41,10 @@ open class BackendService {
         dataService = retrofit.create<ServiceInterface>(ServiceInterface::class.java)
     }
 
-    fun getProducts(pageNumber: Int, pageSize: Int, responseListener: ResponseListener): Observable<List<Product>>? {
-        var retVal: Observable<List<Product>>? = null
-
-        try {
-            dataService.getProductlist(pageNumber.toString(), pageSize.toString())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : DisposableObserver<ProductsResponse>() {
-                    override fun onComplete() {}
-
-                    override fun onNext(value: ProductsResponse) {
-                        if (responseListener != null) {
-                            responseListener.onSuccess(value)
-                        }
-                    }
-
-                    override fun onError(e: Throwable) {
-                        if (responseListener != null) {
-                            responseListener.onError("error: ${e.message}")
-                        }
-                    }
-                })
-        } catch (ex: Exception) {
-            if (responseListener != null) {
-                responseListener.onError("error: ${ex.message}")
-            }
-        }
-
-        return retVal
+    fun getProducts(pageNumber: Int, pageSize: Int): Observable<ProductsResponse> {
+        return dataService.getProductlist(pageNumber.toString(), pageSize.toString())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
     interface ResponseListener {

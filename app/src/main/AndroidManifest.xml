@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.HomeActivity"></activity>
+        <activity android:name=".ui.HomeActivity"
+                  android:configChanges="orientation"></activity>
     </application>
 
 </manifest>
