@@ -9,14 +9,15 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.sumitthakur.walmartproductlist.R
 import com.sumitthakur.walmartproductlist.api.modle.Product
+import com.sumitthakur.walmartproductlist.testing.OpenForTesting
 import com.sumitthakur.walmartproductlist.util.ImageUtil
 
 /**
  * Recycler view to show list of products
  * @author Sumit.T
  */
-
-class ProductsAdapter(private val activity: FragmentActivity?, private var products: ArrayList<Product>) :
+@OpenForTesting
+open class ProductsAdapter(private val activity: FragmentActivity?, private var products: ArrayList<Product>) :
     RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
 
     private var listener: OnItemClickListener? = null

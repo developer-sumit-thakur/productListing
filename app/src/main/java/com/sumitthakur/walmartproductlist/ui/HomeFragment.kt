@@ -62,7 +62,7 @@ open class HomeFragment : Fragment(), ProductsAdapter.OnItemClickListener {
         productListView.adapter = adapter
         adapter.setOnItemClickListener(this)
         initScrollListener(productListView, llayoutManager as LinearLayoutManager)
-
+        productListViewModel?.loadData()
         productListViewModel?.productLiveData?.observe(this, Observer {
             it?.apply {
                 onSuccess()

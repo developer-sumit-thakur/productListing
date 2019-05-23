@@ -2,31 +2,27 @@ package com.sumitthakur.walmartproductlist.ui
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import com.sumitthakur.walmartproductlist.R
-import com.sumitthakur.walmartproductlist.viewmodel.ProductListViewModel
+import org.hamcrest.Matchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
 
 @RunWith(AndroidJUnit4::class)
 class HomeActivityTest {
 
     @get:Rule
     var activityTestRule = ActivityTestRule<HomeActivity>(HomeActivity::class.java)
-    private lateinit var homeActivity: HomeActivity
-    private lateinit var mockedViewModel: ProductListViewModel
 
     @Before
     fun setUp() {
-        homeActivity = HomeActivity()
-        mockedViewModel = Mockito.mock(ProductListViewModel::class.java)
     }
 
     @After
@@ -34,22 +30,18 @@ class HomeActivityTest {
     }
 
     @Test
-    fun testOnSuccess() {
-        homeActivity.onSuccess()
-        onView(withId(R.id.contentView)).check(matches((isDisplayed())))
+    fun testHomeFragmentLoad() {
+        activityTestRule.activity.initFragment(HomeFragment(), HomeFragment.TAG)
+        onView(Matchers.allOf(withId(R.id.productTitle), ViewMatchers.withText("")))
+        onView(Matchers.allOf(withId(R.id.productPrice), ViewMatchers.withText("")))
     }
 
     @Test
-    fun testOnItemClick() {
-    }
-
-    @Test
-    fun testOnFailure() {
-        homeActivity.onFailure()
-        onView(withId(R.id.errorView)).check(matches((isDisplayed())));
-    }
-
-    fun mockedListener(): HomeFragment.InteractionListener {
-        return activityTestRule.activity
+    fun testDetailsFragmentLoad() {
+        activityTestRule.activity.initFragment(DetailsFragment(), DetailsFragment.TAG)
+        onView(withId(R.id.productTitle)).check(matches((isDisplayed())))
+        onView(withId(R.id.productPrice)).check(matches((isDisplayed())))
+        onView(withId(R.id.inStock)).check(matches((isDisplayed())))
+        onView(withId(R.id.productDesc)).check(matches((isDisplayed())))
     }
 }
